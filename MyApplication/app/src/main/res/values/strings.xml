@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">Viet-Eng Translator</string>
+    <string name="announce">Wrong input!</string>
+    <string name="input">Type input here:</string>
+    <string name="output">Translated result:</string>
+    <string name="btnstr">Translate</string>
+
+</resources>
