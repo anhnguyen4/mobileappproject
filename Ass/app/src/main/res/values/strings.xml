@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">RecentWords</string>
+    <string name="app_title">Recent Words</string>
+    <string name="keyword_title">Key Word</string>
+    <string name="meaning_title">Meaning</string>
+    <string name="save_word">Save</string>
+    <string name="show_word">Show</string>
+    <string name="clear_word">Clear</string>
+    <string name="list_word">List Word</string>
+</resources>
