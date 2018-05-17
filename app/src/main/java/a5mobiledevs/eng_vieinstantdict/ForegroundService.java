@@ -1,12 +1,11 @@
 package a5mobiledevs.eng_vieinstantdict;
 
-import android.app.NotificationChannel;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.Service;
 import android.content.ClipboardManager;
 import android.content.Intent;
 import android.os.AsyncTask;
-import android.os.Build;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
@@ -19,17 +18,21 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class BackgroundService extends Service {
+public class ForegroundService extends Service {
     ClipboardManager clipboardManager;
-    NotificationCompat.Builder notification = new NotificationCompat.Builder(this, getString(R.string.notificationChannelID));
+    NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
     NotificationManager notificationManager;
 
-    public BackgroundService() {
-        createNotificationChannel();
+    private static final String BASED_URL = "https://api-platform.systran.net/translation/text/translate?input=";
+    private static final String endURL = "&source=en&target=vi&withSource=false&withAnnotations=false&backTranslation=false&encoding=utf-8";
+    private static final String keyURL = "&key=81f68939-5120-4774-a06c-aa92e86b9a90";
+
+    public ForegroundService() {
+        //createNotificationChannel();
     }
 
     // https://developer.android.com/training/notify-user/build-notification#Priority
-    private void createNotificationChannel() {
+    /*private void createNotificationChannel() {
         // Create the NotificationChannel, but only on API 26+ because
         // the NotificationChannel class is new and not in the support library
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -44,12 +47,20 @@ public class BackgroundService extends Service {
             notificationManager = getSystemService(NotificationManager.class);
             notificationManager.createNotificationChannel(channel);
         }
-    }
+    }*/
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        //notification
         Log.i("LOL", "Service started");
-        //notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        Notification noti = new Notification.Builder(this)
+                .setContentTitle("Eng-Vie Instant Dict is running")
+                .setContentText("Copy or cut a word to see something magical")
+                .build();
+        // use this method to tell it to keep the Intent running harder
+        startForeground(1, noti);
+        notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
         clipboardManager = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
         clipboardManager.addPrimaryClipChangedListener(new ClipboardManager.OnPrimaryClipChangedListener() {
             @Override
@@ -64,16 +75,13 @@ public class BackgroundService extends Service {
                         .setContentTitle("Translation result")
                         .setContentText(translationResult)
                 ;
+                Log.i("LOL", "Notified!");
                 notificationManager.notify(0, notification.build());
             }
         });
 
         return super.onStartCommand(intent, flags, startId);
     }
-
-    private static final String BASED_URL = "https://api-platform.systran.net/translation/text/translate?input=";
-    private static final String endURL = "&source=en&target=vi&withSource=false&withAnnotations=false&backTranslation=false&encoding=utf-8";
-    private static final String keyURL = "&key=81f68939-5120-4774-a06c-aa92e86b9a90";
 
     private class ConnectTheLib extends AsyncTask<String, Void, String> {
         private String datapost = null;
