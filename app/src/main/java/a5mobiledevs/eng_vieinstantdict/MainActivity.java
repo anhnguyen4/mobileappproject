@@ -4,7 +4,7 @@ import android.app.PendingIntent;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-
+// https://learnandroidtoday.wordpress.com/2013/09/17/how-to-get-results-of-async-task/
 public class MainActivity extends AppCompatActivity {
 
     @Override

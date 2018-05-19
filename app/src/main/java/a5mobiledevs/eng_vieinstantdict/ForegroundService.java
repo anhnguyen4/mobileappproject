@@ -17,10 +17,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.concurrent.ExecutionException;
 
-public class ForegroundService extends Service {
+public class ForegroundService extends Service implements AsyncResponse {
     ClipboardManager clipboardManager;
-    NotificationCompat.Builder notification = new NotificationCompat.Builder(this);
+    NotificationCompat.Builder resultNoti = new NotificationCompat.Builder(this);
     NotificationManager notificationManager;
 
     private static final String BASED_URL = "https://api-platform.systran.net/translation/text/translate?input=";
@@ -28,30 +29,11 @@ public class ForegroundService extends Service {
     private static final String keyURL = "&key=81f68939-5120-4774-a06c-aa92e86b9a90";
 
     public ForegroundService() {
-        //createNotificationChannel();
+        //createNotificationChannel(); // reference: https://developer.android.com/training/notify-user/build-notification#Priority
     }
-
-    // https://developer.android.com/training/notify-user/build-notification#Priority
-    /*private void createNotificationChannel() {
-        // Create the NotificationChannel, but only on API 26+ because
-        // the NotificationChannel class is new and not in the support library
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            Log.i("LOL", "You are using Android 8?");
-            CharSequence name = getString(R.string.channel_name);
-            //String description = getString(R.string.channel_description);
-            int importance = NotificationManager.IMPORTANCE_DEFAULT;
-            NotificationChannel channel = new NotificationChannel(getString(R.string.notificationChannelID), name, importance);
-            //channel.setDescription(description);
-            // Register the channel with the system; you can't change the importance
-            // or other notification behaviors after this
-            notificationManager = getSystemService(NotificationManager.class);
-            notificationManager.createNotificationChannel(channel);
-        }
-    }*/
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
-        //notification
         Log.i("LOL", "Service started");
 
         Notification noti = new Notification.Builder(this)
@@ -67,30 +49,43 @@ public class ForegroundService extends Service {
             public void onPrimaryClipChanged() {
                 String clipboardContent = clipboardManager.getPrimaryClip().getItemAt(0).getText().toString();
                 Log.i("LOL", "You have just copied something!");
-                new ConnectTheLib().execute(clipboardContent);
-                String translationResult = "result";
+                String translationResult = "";
+                ConnectTheLib ctlTask = new ConnectTheLib();
+                //ctlTask.delegate = this;
+                try {
+                    translationResult = ctlTask.execute(clipboardContent).get();
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                } catch (ExecutionException e) {
+                    e.printStackTrace();
+                }
                 // https://developer.android.com/training/notify-user/build-notification
-                notification
+                resultNoti
                         .setSmallIcon(R.drawable.ic_notifications_24dp)
                         .setContentTitle("Translation result")
-                        .setContentText(translationResult)
-                ;
+                        .setContentText(translationResult);
                 Log.i("LOL", "Notified!");
-                notificationManager.notify(0, notification.build());
+                notificationManager.notify(0, resultNoti.build());
             }
         });
 
         return super.onStartCommand(intent, flags, startId);
     }
 
+    @Override
+    public void processFinish(String output) {
+
+    }
+
     private class ConnectTheLib extends AsyncTask<String, Void, String> {
         private String datapost = null;
+        public AsyncResponse delegate = null;
 
         @Override
         protected String doInBackground(String... strings) {
             try {
                 String thisURL = BASED_URL
-                        + strings
+                        + strings[0]
                         + endURL
                         + keyURL;
                 URL url = new URL(thisURL);
@@ -123,7 +118,9 @@ public class ForegroundService extends Service {
 
         @Override
         protected void onPostExecute(String result) {
-            Log.d("LOL", "onPostExecute: " + result);
+            //Log.d("LOL", "onPostExecute: " + result);
+            //notificationManager.notify(0, resultNoti.build());
+            //delegate.processFinish(result);
         }
 
         @Override
