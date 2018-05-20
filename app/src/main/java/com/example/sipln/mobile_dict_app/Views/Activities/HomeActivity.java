@@ -1,4 +1,4 @@
-package com.example.sipln.mobile_dict_app.Activities;
+package com.example.sipln.mobile_dict_app.Views.Activities;
 
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
@@ -12,7 +12,7 @@ import com.example.sipln.mobile_dict_app.R;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.example.sipln.mobile_dict_app.DB.Word;
+import com.example.sipln.mobile_dict_app.Models.Word;
 import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
 import com.example.sipln.mobile_dict_app.Services.NotifyService;
 

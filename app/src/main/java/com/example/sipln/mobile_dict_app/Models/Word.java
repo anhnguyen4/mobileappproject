@@ -1,4 +1,4 @@
-package com.example.sipln.mobile_dict_app.DB;
+package com.example.sipln.mobile_dict_app.Models;
 
 public class Word {
 

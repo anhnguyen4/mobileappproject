@@ -12,7 +12,7 @@ import com.example.sipln.mobile_dict_app.R;
 
 import java.util.List;
 
-import com.example.sipln.mobile_dict_app.DB.Word;
+import com.example.sipln.mobile_dict_app.Models.Word;
 
 public class RVWordEntryAdapter extends RecyclerView.Adapter<RVWordEntryAdapter.WordEntryViewHolder>{
 
