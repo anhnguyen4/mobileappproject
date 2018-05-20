@@ -1,21 +1,20 @@
 package com.example.sipln.mobile_dict_app.Activities;
 
-import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
-import android.view.View;
 
 import com.example.sipln.mobile_dict_app.R;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import Models.DB.Word;
-import Presenters.RVWordEntryAdapter;
+import com.example.sipln.mobile_dict_app.DB.Word;
+import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
+import com.example.sipln.mobile_dict_app.Services.NotifyService;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -40,6 +39,9 @@ public class HomeActivity extends AppCompatActivity {
         rvWordEntryAdapter = new RVWordEntryAdapter(wordList);
         recyclerView.setAdapter(rvWordEntryAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
+        Intent notifyService = new Intent(this, NotifyService.class);
+        startService(notifyService);
     }
 
     private void initData(){

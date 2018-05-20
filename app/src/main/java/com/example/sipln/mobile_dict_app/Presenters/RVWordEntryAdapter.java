@@ -1,4 +1,4 @@
-package Presenters;
+package com.example.sipln.mobile_dict_app.Presenters;
 
 import android.support.annotation.NonNull;
 import android.support.v7.widget.CardView;
@@ -12,7 +12,7 @@ import com.example.sipln.mobile_dict_app.R;
 
 import java.util.List;
 
-import Models.DB.Word;
+import com.example.sipln.mobile_dict_app.DB.Word;
 
 public class RVWordEntryAdapter extends RecyclerView.Adapter<RVWordEntryAdapter.WordEntryViewHolder>{
 

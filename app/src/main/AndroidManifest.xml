@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sipln.mobile_dict_app">
+<manifest
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.sipln.mobile_dict_app"
+    >
 
     <application
         android:allowBackup="true"
@@ -16,6 +18,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <service
+            android:name=".Services.NotifyService"
+            android:enabled="true">
+        </service>
     </application>
+    
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
 </manifest>
