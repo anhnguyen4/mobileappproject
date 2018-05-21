@@ -1,11 +1,15 @@
 package com.example.sipln.mobile_dict_app.Views.Activities;
 
 import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.design.widget.NavigationView;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+
+import android.view.MenuItem;
 
 import com.example.sipln.mobile_dict_app.R;
 
@@ -27,6 +31,23 @@ public class HomeActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        NavigationView drawer = findViewById(R.id.nv_drawer);
+        drawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.About:
+                        Intent about = new Intent(HomeActivity.this, AboutActivity.class);
+                        startActivity(about);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
 
         recyclerView = findViewById(R.id.rv_word_list);
         recyclerView.setHasFixedSize(true);
