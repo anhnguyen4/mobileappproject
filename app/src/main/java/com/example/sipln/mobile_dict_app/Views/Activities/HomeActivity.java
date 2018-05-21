@@ -14,7 +14,7 @@ import java.util.List;
 
 import com.example.sipln.mobile_dict_app.Models.Word;
 import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
-import com.example.sipln.mobile_dict_app.Services.NotifyService;
+import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -40,15 +40,15 @@ public class HomeActivity extends AppCompatActivity {
         recyclerView.setAdapter(rvWordEntryAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        Intent notifyService = new Intent(this, NotifyService.class);
-        startService(notifyService);
+        Intent clipboardObserver = new Intent(this, ClipboardObserveService.class);
+        startService(clipboardObserver);
     }
 
     private void initData(){
         wordList = new ArrayList<>();
-        wordList.add(new Word("Hello"));
-        wordList.add(new Word("Happy"));
-        wordList.add(new Word("Family"));
+        wordList.add(new Word(this, "Hello"));
+        wordList.add(new Word(this,"Happy"));
+        wordList.add(new Word(this,"Family"));
     }
 
 }

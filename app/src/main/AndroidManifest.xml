@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.sipln.mobile_dict_app"
-    >
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.sipln.mobile_dict_app">
+
+    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -20,11 +21,11 @@
         </activity>
 
         <service
+            android:name=".Services.ClipboardObserveService"
+            android:enabled="true"></service>
+        <service
             android:name=".Services.NotifyService"
-            android:enabled="true">
-        </service>
+            android:exported="false"></service>
     </application>
-    
-    <uses-permission android:name="android.permission.ACCESS_NOTIFICATION_POLICY" />
 
 </manifest>
