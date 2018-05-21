@@ -115,6 +115,7 @@ public class Word {
 
     private void createNotification(String meaning) {
         Intent intent = new Intent(context, NotifyService.class);
+        intent.putExtra("word", word);
         intent.putExtra("meaning", meaning);
         context.startService(intent);
     }
