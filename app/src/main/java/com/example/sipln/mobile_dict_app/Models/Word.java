@@ -48,4 +48,9 @@ public class Word {
         this.meaning = meaning;
     }
 
+    @Override
+    public String toString() {
+        return "Word {keyword=" + word + ", meaning=" + meaning + "}";
+    }
+
 }
