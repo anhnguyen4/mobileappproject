@@ -67,9 +67,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private void initData(){
         wordList = new ArrayList<>();
-        wordList.add(new Word(this, "Hello"));
-        wordList.add(new Word(this,"Happy"));
-        wordList.add(new Word(this,"Family"));
+        wordList.add(new Word("Hello"));
+        wordList.add(new Word("Happy"));
+        wordList.add(new Word("Family"));
     }
 
 }

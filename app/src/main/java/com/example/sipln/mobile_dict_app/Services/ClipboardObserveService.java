@@ -1,6 +1,7 @@
 package com.example.sipln.mobile_dict_app.Services;
 
 import com.example.sipln.mobile_dict_app.Models.Word;
+import com.example.sipln.mobile_dict_app.Models.WordHelper;
 import com.example.sipln.mobile_dict_app.R;
 
 import android.app.IntentService;
@@ -26,9 +27,8 @@ public class ClipboardObserveService extends Service {
             @Override
             public void onPrimaryClipChanged() {
                 String searchWord = clipboardManager.getPrimaryClip().getItemAt(0).getText().toString();
-                Word word = new Word(context, searchWord);
+                WordHelper word = new WordHelper(context, new Word(searchWord));
                 word.translate();
-
             }
         });
         return super.onStartCommand(intent, flags, startId);
