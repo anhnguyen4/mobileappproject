@@ -33,6 +33,7 @@ public class RVWordEntryAdapter extends RecyclerView.Adapter<RVWordEntryAdapter.
     @Override
     public void onBindViewHolder(@NonNull WordEntryViewHolder holder, int position) {
         holder.wordText.setText(wordList.get(position).getWord());
+        holder.wordMeaning.setText(wordList.get(position).getMeaning());
     }
 
     @Override
@@ -48,10 +49,12 @@ public class RVWordEntryAdapter extends RecyclerView.Adapter<RVWordEntryAdapter.
     public static class WordEntryViewHolder extends RecyclerView.ViewHolder {
         private CardView wordEntry;
         private TextView wordText;
+        private TextView wordMeaning;
         public WordEntryViewHolder(View itemView) {
             super(itemView);
             wordEntry =  itemView.findViewById(R.id.cv_word_entry);
             wordText  =  itemView.findViewById(R.id.tv_word_text);
+            wordMeaning  =  itemView.findViewById(R.id.tv_word_meaning);
         }
     }
 }

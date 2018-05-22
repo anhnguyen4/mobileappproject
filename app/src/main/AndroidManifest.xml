@@ -27,7 +27,11 @@
             android:name=".Services.NotifyService"
             android:exported="false" />
 
-        <activity android:name=".Views.Activities.AboutActivity"></activity>
+        <activity android:name=".Views.Activities.AboutActivity" />
+
+        <service
+            android:name=".Services.DBService"
+            android:exported="false"></service>
     </application>
 
 </manifest>

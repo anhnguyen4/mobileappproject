@@ -4,8 +4,10 @@ import android.app.IntentService;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.support.annotation.Nullable;
 import android.support.v4.app.NotificationCompat;
 
+import com.example.sipln.mobile_dict_app.Models.WordHelper;
 import com.example.sipln.mobile_dict_app.R;
 import com.example.sipln.mobile_dict_app.Views.Activities.HomeActivity;
 
@@ -31,11 +33,11 @@ public class NotifyService extends IntentService {
                             intent.getExtras().getString("word") + "\n" +
                             intent.getExtras().getString("meaning")
                     )
-                    .addAction(R.drawable.ic_edit, "Edit", PendingIntent.getActivity(this, 1000, new Intent(this, HomeActivity.class), 0))
-                    .addAction(R.drawable.ic_save, "Save", PendingIntent.getActivity(this, 1000, new Intent(this, HomeActivity.class), 0))
-                    .addAction(R.drawable.ic_discard, "Discard", PendingIntent.getActivity(this, 1000, new Intent(this, HomeActivity.class), 0));
+                    .addAction(R.drawable.ic_save, "Save", PendingIntent.getService(this, 1000, new Intent(this, DBService.class).setAction("Save"), 0))
+                    ;
 
             notificationManager.notify(0, notification.build());
+
         }
     }
 

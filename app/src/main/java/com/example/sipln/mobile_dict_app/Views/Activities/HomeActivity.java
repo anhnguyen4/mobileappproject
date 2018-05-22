@@ -1,24 +1,28 @@
 package com.example.sipln.mobile_dict_app.Views.Activities;
 
-import android.content.Intent;
-import android.support.annotation.NonNull;
-import android.support.design.widget.NavigationView;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+        import android.content.BroadcastReceiver;
+        import android.content.Context;
+        import android.content.Intent;
+        import android.content.IntentFilter;
+        import android.support.annotation.NonNull;
+        import android.support.design.widget.NavigationView;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.support.v7.widget.DefaultItemAnimator;
+        import android.support.v7.widget.LinearLayoutManager;
+        import android.support.v7.widget.RecyclerView;
 
-import android.view.MenuItem;
+        import android.util.Log;
+        import android.view.MenuItem;
 
-import com.example.sipln.mobile_dict_app.R;
+        import com.example.sipln.mobile_dict_app.R;
 
-import java.util.ArrayList;
-import java.util.List;
+        import java.util.ArrayList;
+        import java.util.List;
 
-import com.example.sipln.mobile_dict_app.Models.Word;
-import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
-import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
+        import com.example.sipln.mobile_dict_app.Models.Word;
+        import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
+        import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -26,6 +30,10 @@ public class HomeActivity extends AppCompatActivity {
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RVWordEntryAdapter rvWordEntryAdapter;
+
+    private boolean receiverIsRegisted = false;
+    private HomeBroadcastReceiver receiver = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +63,6 @@ public class HomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-
         initData();
         rvWordEntryAdapter = new RVWordEntryAdapter(wordList);
         recyclerView.setAdapter(rvWordEntryAdapter);
@@ -63,13 +70,49 @@ public class HomeActivity extends AppCompatActivity {
 
         Intent clipboardObserver = new Intent(this, ClipboardObserveService.class);
         startService(clipboardObserver);
+
     }
 
-    private void initData(){
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(receiverIsRegisted) {
+            unregisterReceiver(receiver);
+            receiver = null;
+            receiverIsRegisted = false;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if ( !receiverIsRegisted) {
+            receiver = new HomeBroadcastReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("Save");
+            registerReceiver(receiver, filter);
+            receiverIsRegisted = true;
+        }
+    }
+
+
+    private  class HomeBroadcastReceiver extends  BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            updateUI();
+        }
+    }
+
+    private void updateUI() {
+        Log.i("Receiver", "UpdateUI");
+    }
+
+    private  void initData(){
         wordList = new ArrayList<>();
-        wordList.add(new Word("Hello"));
-        wordList.add(new Word("Happy"));
-        wordList.add(new Word("Family"));
+        wordList.add(new Word("Beautiful"));
+        wordList.add(new Word("Hansome"));
+        wordList.add(new Word("Pretty"));
     }
 
 }
