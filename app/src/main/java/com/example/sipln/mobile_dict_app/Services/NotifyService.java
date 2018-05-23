@@ -37,7 +37,7 @@ public class NotifyService extends IntentService {
                             .addLine(intent.getExtras().getString("word"))
                             .addLine(intent.getExtras().getString("meaning"))
                     )
-                    .addAction(R.drawable.ic_save, "Save", PendingIntent.getService(this, 1000, save, 0))
+                    .addAction(R.drawable.ic_save, "Save", PendingIntent.getService(this, 0, save, 0))
                     ;
 
             notificationManager.notify(0, notification.build());

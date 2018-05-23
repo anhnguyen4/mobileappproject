@@ -6,6 +6,7 @@ package com.example.sipln.mobile_dict_app.Views.Activities;
         import android.content.IntentFilter;
         import android.support.annotation.NonNull;
         import android.support.design.widget.NavigationView;
+        import android.support.v4.content.LocalBroadcastManager;
         import android.support.v7.app.AppCompatActivity;
         import android.os.Bundle;
         import android.support.v7.widget.DefaultItemAnimator;
@@ -40,6 +41,15 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        if ( !receiverIsRegisted) {
+            receiver = new HomeBroadcastReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("Save");
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+            receiverIsRegisted = true;
+        }
+
+
         NavigationView drawer = findViewById(R.id.nv_drawer);
         drawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
             @Override
@@ -63,10 +73,11 @@ public class HomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        initData();
+       initData();
         rvWordEntryAdapter = new RVWordEntryAdapter(wordList);
         recyclerView.setAdapter(rvWordEntryAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
+
 
         Intent clipboardObserver = new Intent(this, ClipboardObserveService.class);
         startService(clipboardObserver);
@@ -74,25 +85,26 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
+    protected void onDestroy() {
+        super.onDestroy();
+
         if(receiverIsRegisted) {
-            unregisterReceiver(receiver);
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
             receiver = null;
             receiverIsRegisted = false;
         }
     }
 
     @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
-        if ( !receiverIsRegisted) {
-            receiver = new HomeBroadcastReceiver();
-            IntentFilter filter = new IntentFilter();
-            filter.addAction("Save");
-            registerReceiver(receiver, filter);
-            receiverIsRegisted = true;
-        }
+
     }
 
 
@@ -106,13 +118,12 @@ public class HomeActivity extends AppCompatActivity {
 
     private void updateUI() {
         Log.i("Receiver", "UpdateUI");
+        wordList.add(new Word("Funny"));
+        rvWordEntryAdapter.notifyDataSetChanged();
     }
 
     private  void initData(){
         wordList = new ArrayList<>();
-        wordList.add(new Word("Beautiful"));
-        wordList.add(new Word("Hansome"));
-        wordList.add(new Word("Pretty"));
     }
 
 }

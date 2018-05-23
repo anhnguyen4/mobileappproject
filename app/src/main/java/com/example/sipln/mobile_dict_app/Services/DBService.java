@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.sipln.mobile_dict_app.Models.Word;
@@ -12,6 +13,7 @@ import com.example.sipln.mobile_dict_app.Models.WordHelper;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.util.Map;
 
 public class DBService extends IntentService {
 
@@ -35,34 +37,65 @@ public class DBService extends IntentService {
         if (intent != null) {
             final String action = intent.getAction();
             if(action.equals("Save")) {
-                Log.i("onHandleIntent", intent.getExtras().getString("word"));
-                Log.i("onHandleIntent", intent.getExtras().getString("meaning"));
                 SaveToDB(intent);
+                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             }
 
         }
     }
 
     private void SaveToDB(Intent intent){
-        Log.i("Save", "Save to DB");
+
         recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         editor = recentWords.edit();
+        Bundle receivedData = new Bundle();
+        if (receivedData != null) {
+            Word word = new Word(receivedData.getString("word"), receivedData.getString("meaning"));
 
-        Word word = new Word(intent.getExtras().getString("word"), intent.getExtras().getString("meaning"));
-        Log.i("SaveToDB", word.toString());
-        gson = new Gson();
-        String data = gson.toJson(word);
+            gson = new Gson();
+            String data = gson.toJson(word);
 
-        int top = getTop();
+            int top = getTop();
 
-        editor.putInt(COUNT, top);
-        editor.putString(KEY_WORD + setNum(top), data);
-        editor.apply();
+            editor.putInt(COUNT, top);
+            editor.putString(KEY_WORD + setNum(top), data);
+            editor.apply();
+        }
+        else {
+            Log.i("Save Error", "Bundle is NULL");
+        }
 
     }
 
     private void LoadFromDB(){
+//        int pos, length;
+//        //Contain list all recent saved words-meaning and sorted with time order
+//        String[][] mListWord;
+//        //String which show on screen
+//        StringBuffer result = new StringBuffer("");
+//
+//
+//        recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+//
+//        length = getTop();
+//        mListWord = new String[2][length];
+//        Map<String, ?> allEntries = recentWords.getAll();
+//        for (Map.Entry<String, ?> mEntries : allEntries.entrySet()) {
+//            if (!mEntries.getKey().equals(COUNT)) {
+//                gson = new Gson();
+//                word = gson.fromJson(mEntries.getValue().toString(), Word.class);
+//                pos = Integer.parseInt(mEntries.getKey().substring(9));
+//                mListWord[0][pos] = word.getKeyword();
+//                mListWord[1][pos] = word.getMeaning();
+//            }
+//        }
+    }
 
+    public void ClearDB() {
+        recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        editor = recentWords.edit();
+        editor.clear();
+        editor.apply();
     }
 
     public int getTop() {
