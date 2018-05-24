@@ -19,7 +19,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 
 
-public class Word implements Parcelable{
+public class Word {
 
     private String word;
     private String meaning;
@@ -29,10 +29,6 @@ public class Word implements Parcelable{
         this.meaning = meaning;
     }
 
-    public Word(Parcel in) {
-        word = in.readString();
-        meaning = in.readString();
-    }
 
     public Word(String word) {
         this.word = word;
@@ -59,26 +55,5 @@ public class Word implements Parcelable{
     public String toString() {
         return "Word {keyword=" + word + ", meaning=" + meaning + "}";
     }
-
-    @Override
-    public int describeContents() {
-        return 0;
-    }
-
-    @Override
-    public void writeToParcel(Parcel dest, int flags) {
-        dest.writeString( word);
-        dest.writeString(meaning);
-    }
-
-    public static final Parcelable.Creator<Word> CREATOR = new Parcelable.Creator<Word>() {
-        public Word createFromParcel(Parcel in) {
-            return new Word(in);
-        }
-
-        public Word[] newArray(int size) {
-            return new Word[size];
-        }
-    };
 
 }

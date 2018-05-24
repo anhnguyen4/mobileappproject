@@ -17,6 +17,8 @@ public class NotifyService extends IntentService {
 
     NotificationCompat.Builder notification = new NotificationCompat.Builder(this, "0");
     NotificationManager notificationManager;
+    Intent save;
+    private int pos = 0;
 
     public NotifyService() {
         super("");
@@ -26,10 +28,12 @@ public class NotifyService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-            Intent save = new Intent(this, DBService.class);
-            save.setAction("Save");
+            save = new Intent(this, DBService.class);
+            save.setAction("Save"+pos);
+            save.putExtra("pos", String.valueOf(pos));
             save.putExtra("word",intent.getExtras().getString("word"));
             save.putExtra("meaning",intent.getExtras().getString("meaning"));
+            pos += 1;
             notification
                     .setSmallIcon(R.drawable.ic_notifications__24dp)
                     .setContentTitle("Word Meaning")
@@ -37,7 +41,7 @@ public class NotifyService extends IntentService {
                             .addLine(intent.getExtras().getString("word"))
                             .addLine(intent.getExtras().getString("meaning"))
                     )
-                    .addAction(R.drawable.ic_save, "Save", PendingIntent.getService(this, 0, save, 0))
+                    .addAction(R.drawable.ic_save, "Save", PendingIntent.getService(this, 0, save, PendingIntent.FLAG_UPDATE_CURRENT))
                     ;
 
             notificationManager.notify(0, notification.build());

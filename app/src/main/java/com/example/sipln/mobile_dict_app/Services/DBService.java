@@ -41,13 +41,12 @@ public class DBService extends IntentService {
     protected void onHandleIntent(Intent intent) {
         if (intent != null) {
             final String action = intent.getAction();
-            if(action.equals("Save")) {
+            if(action.equals("Save"+intent.getExtras().getString("pos"))) {
                 SaveToDB(intent);
                 List<Word> wordList = LoadFromDB();
                 Intent updateUI_intent = new Intent();
-                Bundle data = new Bundle();
-                data.putParcelableArrayList("wordList", new ArrayList<Parcelable>(wordList));
-                updateUI_intent.putExtras(data);
+                String data = gson.toJson(wordList);
+                updateUI_intent.putExtra("data", data);
                 updateUI_intent.setAction("Update_UI");
                 LocalBroadcastManager.getInstance(this).sendBroadcast(updateUI_intent);
             }
@@ -69,8 +68,7 @@ public class DBService extends IntentService {
 
             editor.putInt(COUNT, top);
             editor.putString(KEY_WORD + setNum(top), data);
-            Log.i(KEY_WORD + setNum(top), data);
-            editor.apply();
+            editor.commit();
         }
         else {
             Log.i("Save Error", "Bundle is NULL");
@@ -83,15 +81,23 @@ public class DBService extends IntentService {
         recentWords = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         List<Word> wordList = new ArrayList<>();
 
-        Map<String, ?> allEntries = recentWords.getAll();
-        for (Map.Entry<String, ?> mEntries : allEntries.entrySet()) {
-            if (!mEntries.getKey().equals(COUNT)) {
-                gson = new Gson();
-                Word word = gson.fromJson(mEntries.getValue().toString(), Word.class);
-                Log.i(word.getWord(), word.getMeaning());
-                wordList.add(word);
-            }
+//        Map<String, ?> allEntries = recentWords.getAll();
+////        for (Map.Entry<String, ?> mEntries : allEntries.entrySet()) {
+////            if (!mEntries.getKey().equals(COUNT)) {
+////                gson = new Gson();
+////                Word word = gson.fromJson(mEntries.getValue().toString(), Word.class);
+////                Log.i(word.getWord(), word.getMeaning());
+////                wordList.add(word);
+////            }
+////        }
+
+        int num = getTop();
+        gson = new Gson();
+        for (int i = 0; i < num; i++) {
+            Word word =   gson.fromJson(recentWords.getString(KEY_WORD + setNum(i), "0"), Word.class);
+            wordList.add(word);
         }
+
         return wordList;
     }
 

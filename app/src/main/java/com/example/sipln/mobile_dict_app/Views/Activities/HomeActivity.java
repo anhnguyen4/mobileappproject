@@ -24,11 +24,12 @@ package com.example.sipln.mobile_dict_app.Views.Activities;
         import com.example.sipln.mobile_dict_app.Models.Word;
         import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
         import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
-        import com.example.sipln.mobile_dict_app.Services.DBService;
+        import com.google.gson.Gson;
+        import com.google.gson.reflect.TypeToken;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private List<Word> wordList;
+    private List<Word> wordList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RVWordEntryAdapter rvWordEntryAdapter;
@@ -45,7 +46,7 @@ public class HomeActivity extends AppCompatActivity {
         if ( !receiverIsRegisted) {
             receiver = new HomeBroadcastReceiver();
             IntentFilter filter = new IntentFilter();
-            filter.addAction("Save");
+            filter.addAction("Update_UI");
             LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
             receiverIsRegisted = true;
         }
@@ -74,11 +75,9 @@ public class HomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-        initData();
         rvWordEntryAdapter = new RVWordEntryAdapter(wordList);
         recyclerView.setAdapter(rvWordEntryAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-
 
         Intent clipboardObserver = new Intent(this, ClipboardObserveService.class);
         startService(clipboardObserver);
@@ -120,15 +119,11 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private void updateUI(Intent intent) {
-        Log.i("Receiver", "UpdateUI");
-//        Bundle data = intent.getExtras();
-//        wordList = data.getParcelableArrayList("wordList");
-        wordList.add(new Word("Application", "Ứng dụng"));
-        rvWordEntryAdapter.notifyDataSetChanged();
-    }
-
-    private  void initData(){
-        wordList = new ArrayList<>();
+        Gson gson = new Gson();
+        String data = intent.getExtras().getString("data");
+        wordList = gson.fromJson(data, new TypeToken<List<Word>>(){}.getType());
+        recyclerView.setAdapter(new RVWordEntryAdapter(wordList));
+        recyclerView.invalidate();
     }
 
 }
