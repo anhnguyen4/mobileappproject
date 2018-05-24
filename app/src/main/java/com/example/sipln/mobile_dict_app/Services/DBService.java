@@ -60,15 +60,16 @@ public class DBService extends IntentService {
         Bundle receivedData = intent.getExtras();
         if (receivedData != null) {
             Word word = new Word(receivedData.getString("word"), receivedData.getString("meaning"));
+            if(!hasExisted(word, LoadFromDB())) {
+                gson = new Gson();
+                String data = gson.toJson(word);
 
-            gson = new Gson();
-            String data = gson.toJson(word);
+                int top = getTop();
 
-            int top = getTop();
-
-            editor.putInt(COUNT, top);
-            editor.putString(KEY_WORD + setNum(top), data);
-            editor.commit();
+                editor.putInt(COUNT, top);
+                editor.putString(KEY_WORD + setNum(top), data);
+                editor.commit();
+            }
         }
         else {
             Log.i("Save Error", "Bundle is NULL");
@@ -81,16 +82,6 @@ public class DBService extends IntentService {
         recentWords = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         List<Word> wordList = new ArrayList<>();
 
-//        Map<String, ?> allEntries = recentWords.getAll();
-////        for (Map.Entry<String, ?> mEntries : allEntries.entrySet()) {
-////            if (!mEntries.getKey().equals(COUNT)) {
-////                gson = new Gson();
-////                Word word = gson.fromJson(mEntries.getValue().toString(), Word.class);
-////                Log.i(word.getWord(), word.getMeaning());
-////                wordList.add(word);
-////            }
-////        }
-
         int num = getTop();
         gson = new Gson();
         for (int i = 0; i < num; i++) {
@@ -101,14 +92,14 @@ public class DBService extends IntentService {
         return wordList;
     }
 
-    public void ClearDB() {
+    private void ClearDB() {
         recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         editor = recentWords.edit();
         editor.clear();
         editor.commit();
     }
 
-    public int getTop() {
+    private int getTop() {
         recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
         if (!recentWords.contains(COUNT)) {
@@ -119,9 +110,18 @@ public class DBService extends IntentService {
 
     }
 
-    public String setNum(int num) {
+    private String setNum(int num) {
         DecimalFormat pattern = new DecimalFormat( "00000000" );
         return String.valueOf(pattern.format(num));
+    }
+
+    private boolean hasExisted(Word word, List<Word> wordList){
+        for (int i =0; i < wordList.size(); i++){
+            if (word.toString().equals(wordList.get(i).toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
