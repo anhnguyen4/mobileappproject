@@ -24,6 +24,7 @@ package com.example.sipln.mobile_dict_app.Views.Activities;
         import com.example.sipln.mobile_dict_app.Models.Word;
         import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
         import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
+        import com.example.sipln.mobile_dict_app.Services.DBService;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -73,7 +74,7 @@ public class HomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-       initData();
+        initData();
         rvWordEntryAdapter = new RVWordEntryAdapter(wordList);
         recyclerView.setAdapter(rvWordEntryAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
@@ -112,13 +113,17 @@ public class HomeActivity extends AppCompatActivity {
 
         @Override
         public void onReceive(Context context, Intent intent) {
-            updateUI();
+            if (intent.getAction().equals("Update_UI")) {
+                updateUI(intent);
+            }
         }
     }
 
-    private void updateUI() {
+    private void updateUI(Intent intent) {
         Log.i("Receiver", "UpdateUI");
-        wordList.add(new Word("Funny"));
+//        Bundle data = intent.getExtras();
+//        wordList = data.getParcelableArrayList("wordList");
+        wordList.add(new Word("Application", "Ứng dụng"));
         rvWordEntryAdapter.notifyDataSetChanged();
     }
 

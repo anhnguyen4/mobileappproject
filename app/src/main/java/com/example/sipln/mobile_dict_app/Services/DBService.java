@@ -5,22 +5,27 @@ import android.content.Intent;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.example.sipln.mobile_dict_app.Models.Word;
 import com.example.sipln.mobile_dict_app.Models.WordHelper;
+import com.example.sipln.mobile_dict_app.Views.Activities.HomeActivity;
 import com.google.gson.Gson;
 
+import java.lang.invoke.WrongMethodTypeException;
 import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 public class DBService extends IntentService {
 
 
     private String SHARED_PREFERENCES_NAME = "recent_words";
-    private String KEY_WORD = "key_word_";
-    private String COUNT = "count";
+    private String KEY_WORD = "Word_";
+    private String COUNT = "COUNT";
     private int ZERO = 0;
 
     private SharedPreferences recentWords;
@@ -38,17 +43,22 @@ public class DBService extends IntentService {
             final String action = intent.getAction();
             if(action.equals("Save")) {
                 SaveToDB(intent);
-                LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                List<Word> wordList = LoadFromDB();
+                Intent updateUI_intent = new Intent();
+                Bundle data = new Bundle();
+                data.putParcelableArrayList("wordList", new ArrayList<Parcelable>(wordList));
+                updateUI_intent.putExtras(data);
+                updateUI_intent.setAction("Update_UI");
+                LocalBroadcastManager.getInstance(this).sendBroadcast(updateUI_intent);
             }
-
         }
     }
 
     private void SaveToDB(Intent intent){
 
-        recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        recentWords = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         editor = recentWords.edit();
-        Bundle receivedData = new Bundle();
+        Bundle receivedData = intent.getExtras();
         if (receivedData != null) {
             Word word = new Word(receivedData.getString("word"), receivedData.getString("meaning"));
 
@@ -59,6 +69,7 @@ public class DBService extends IntentService {
 
             editor.putInt(COUNT, top);
             editor.putString(KEY_WORD + setNum(top), data);
+            Log.i(KEY_WORD + setNum(top), data);
             editor.apply();
         }
         else {
@@ -67,35 +78,28 @@ public class DBService extends IntentService {
 
     }
 
-    private void LoadFromDB(){
-//        int pos, length;
-//        //Contain list all recent saved words-meaning and sorted with time order
-//        String[][] mListWord;
-//        //String which show on screen
-//        StringBuffer result = new StringBuffer("");
-//
-//
-//        recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-//
-//        length = getTop();
-//        mListWord = new String[2][length];
-//        Map<String, ?> allEntries = recentWords.getAll();
-//        for (Map.Entry<String, ?> mEntries : allEntries.entrySet()) {
-//            if (!mEntries.getKey().equals(COUNT)) {
-//                gson = new Gson();
-//                word = gson.fromJson(mEntries.getValue().toString(), Word.class);
-//                pos = Integer.parseInt(mEntries.getKey().substring(9));
-//                mListWord[0][pos] = word.getKeyword();
-//                mListWord[1][pos] = word.getMeaning();
-//            }
-//        }
+    private List<Word> LoadFromDB(){
+
+        recentWords = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        List<Word> wordList = new ArrayList<>();
+
+        Map<String, ?> allEntries = recentWords.getAll();
+        for (Map.Entry<String, ?> mEntries : allEntries.entrySet()) {
+            if (!mEntries.getKey().equals(COUNT)) {
+                gson = new Gson();
+                Word word = gson.fromJson(mEntries.getValue().toString(), Word.class);
+                Log.i(word.getWord(), word.getMeaning());
+                wordList.add(word);
+            }
+        }
+        return wordList;
     }
 
     public void ClearDB() {
         recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         editor = recentWords.edit();
         editor.clear();
-        editor.apply();
+        editor.commit();
     }
 
     public int getTop() {
@@ -109,13 +113,9 @@ public class DBService extends IntentService {
 
     }
 
-
     public String setNum(int num) {
-
         DecimalFormat pattern = new DecimalFormat( "00000000" );
-
         return String.valueOf(pattern.format(num));
-
     }
 
 }
