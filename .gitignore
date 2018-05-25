@@ -6,3 +6,10 @@
 /build
 /captures
 .externalNativeBuild
+Ex3/.gradle
+Ex3/local.properties
+Ex3/.idea/*
+Ex3/.DS_Store
+Ex3/build
+Ex3/captures
+Ex3/.externalNativeBuild
