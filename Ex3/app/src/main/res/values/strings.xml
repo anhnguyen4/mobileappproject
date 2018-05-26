@@ -3,4 +3,22 @@
     <string name="title_discover">Discover</string>
     <string name="title_saved">Saved</string>
     <string name="title_notifications">Notifications</string>
+    <string-array name="jobs">
+        <item>Cơ khí</item>
+        <item>Xây dựng</item>
+        <item>IT</item>
+        <item>Ngân hàng</item>
+        <item>Kế toán</item>
+    </string-array>
+    <string-array name="location">
+        <item>HCM</item>
+        <item>Vũng Tàu</item>
+        <item>Đồng Nai</item>
+        <item>Tây Ninh</item>
+        <item>Cần Thơ</item>
+    </string-array>
+    <string name="announce">Wrong input!</string>
+    <string name="jobtype">Công việc:</string>
+    <string name="location">Địa điểm:</string>
+    <string name="btnstr">Tìm kiếm</string>
 </resources>
