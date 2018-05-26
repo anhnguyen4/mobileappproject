@@ -1,32 +1,107 @@
 package com.example.sipln.mobile_dict_app.Views.Activities;
 
-import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+        import android.content.BroadcastReceiver;
+        import android.content.Context;
+        import android.content.Intent;
+        import android.content.IntentFilter;
+        import android.support.annotation.NonNull;
+        import android.support.design.widget.FloatingActionButton;
+        import android.support.design.widget.NavigationView;
+        import android.support.v4.content.LocalBroadcastManager;
+        import android.support.v7.app.AppCompatActivity;
+        import android.os.Bundle;
+        import android.support.v7.widget.DefaultItemAnimator;
+        import android.support.v7.widget.LinearLayoutManager;
+        import android.support.v7.widget.RecyclerView;
 
-import com.example.sipln.mobile_dict_app.R;
+        import android.util.Log;
+        import android.view.MenuItem;
+        import android.view.View;
 
-import java.util.ArrayList;
-import java.util.List;
+        import com.example.sipln.mobile_dict_app.R;
 
-import com.example.sipln.mobile_dict_app.Models.Word;
-import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
-import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
+        import java.util.ArrayList;
+        import java.util.List;
+
+        import com.example.sipln.mobile_dict_app.Models.Word;
+        import com.example.sipln.mobile_dict_app.Presenters.RVWordEntryAdapter;
+        import com.example.sipln.mobile_dict_app.Services.ClipboardObserveService;
+        import com.google.gson.Gson;
+        import com.google.gson.reflect.TypeToken;
 
 public class HomeActivity extends AppCompatActivity {
 
-    private List<Word> wordList;
+    private List<Word> wordList = new ArrayList<>();
     private RecyclerView recyclerView;
     private RecyclerView.LayoutManager layoutManager;
     private RVWordEntryAdapter rvWordEntryAdapter;
+
+    private FloatingActionButton fab, fab_1, fab_2, fab_3;
+    private boolean fabAbleToVisible = false;
+
+    private boolean receiverIsRegisted = false;
+    private HomeBroadcastReceiver receiver = null;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        if ( !receiverIsRegisted) {
+            receiver = new HomeBroadcastReceiver();
+            IntentFilter filter = new IntentFilter();
+            filter.addAction("Update_UI");
+            LocalBroadcastManager.getInstance(this).registerReceiver(receiver, filter);
+            receiverIsRegisted = true;
+        }
+
+
+        NavigationView drawer = findViewById(R.id.nv_drawer);
+        drawer.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+            @Override
+            public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+                int id = item.getItemId();
+                switch (id) {
+                    case R.id.About:
+                        Intent about = new Intent(HomeActivity.this, AboutActivity.class);
+                        startActivity(about);
+                        break;
+                    default:
+                        break;
+                }
+                return false;
+            }
+        });
+
+        fab = findViewById(R.id.fab);
+        fab_1 = findViewById(R.id.fab_1);
+        fab_2 = findViewById(R.id.fab_2);
+        fab_3 = findViewById(R.id.fab_3);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fabAbleToVisible)
+                {
+                    hide();
+                }
+                else {
+                    show();
+                }
+                fabAbleToVisible = ! fabAbleToVisible;
+
+            }
+            private  void show(){
+                fab_1.show();
+                fab_2.show();
+                fab_3.show();
+            }
+            private  void hide(){
+                fab_1.hide();
+                fab_2.hide();
+                fab_3.hide();
+            }
+        });
 
         recyclerView = findViewById(R.id.rv_word_list);
         recyclerView.setHasFixedSize(true);
@@ -34,21 +109,55 @@ public class HomeActivity extends AppCompatActivity {
         layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
 
-
-        initData();
         rvWordEntryAdapter = new RVWordEntryAdapter(wordList);
         recyclerView.setAdapter(rvWordEntryAdapter);
         recyclerView.setItemAnimator(new DefaultItemAnimator());
 
         Intent clipboardObserver = new Intent(this, ClipboardObserveService.class);
         startService(clipboardObserver);
+
     }
 
-    private void initData(){
-        wordList = new ArrayList<>();
-        wordList.add(new Word(this, "Hello"));
-        wordList.add(new Word(this,"Happy"));
-        wordList.add(new Word(this,"Family"));
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        if(receiverIsRegisted) {
+            LocalBroadcastManager.getInstance(this).unregisterReceiver(receiver);
+            receiver = null;
+            receiverIsRegisted = false;
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+
+    private  class HomeBroadcastReceiver extends  BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            if (intent.getAction().equals("Update_UI")) {
+                updateUI(intent);
+            }
+        }
+    }
+
+    private void updateUI(Intent intent) {
+        Gson gson = new Gson();
+        String data = intent.getExtras().getString("data");
+        wordList = gson.fromJson(data, new TypeToken<List<Word>>(){}.getType());
+        recyclerView.setAdapter(new RVWordEntryAdapter(wordList));
+        recyclerView.invalidate();
     }
 
 }
