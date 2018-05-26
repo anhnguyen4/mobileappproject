@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
 import com.google.gson.Gson;
@@ -17,12 +18,13 @@ import java.util.Map;
 
 public class DBService extends IntentService {
 
+    private Context context = this;
     private String SHARED_PREFERENCES_NAME = "JobsInfo";
     private String KEY_WORD = "Jobs_";
     private String COUNT = "COUNT";
     private int ZERO = 0;
 
-    private SharedPreferences recentWords;
+    private SharedPreferences recentDatas;
     private SharedPreferences.Editor editor;
 
     private Gson gson;
@@ -41,8 +43,12 @@ public class DBService extends IntentService {
                     Log.i("SAVE", "SAVE");
                     SaveToDB(intent);
                 case "LOAD":
-                    LoadFromDB();
+                    List<String> datas = LoadFromDB();
 
+                    Intent update_saved = new Intent();
+                    update_saved.setAction("Update_saved");
+                    update_saved.putExtra("data", new Gson().toJson(datas));
+                    LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
             }
 
         }
@@ -50,8 +56,8 @@ public class DBService extends IntentService {
 
     private void SaveToDB(Intent intent){
 
-        recentWords = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        editor = recentWords.edit();
+        recentDatas = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        editor = recentDatas.edit();
         Bundle receivedData = intent.getExtras();
         if (receivedData != null) {
             String word = receivedData.getString("data");
@@ -74,33 +80,33 @@ public class DBService extends IntentService {
 
     private List<String> LoadFromDB(){
 
-        recentWords = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        List<String> wordList = new ArrayList<>();
+        recentDatas = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        List<String> datas = new ArrayList<>();
 
         int num = getTop();
         gson = new Gson();
         for (int i = 0; i < num; i++) {
-            String word =   gson.fromJson(recentWords.getString(KEY_WORD + setNum(i), "0"), String.class);
-            wordList.add(word);
+            String data =   gson.fromJson(recentDatas.getString(KEY_WORD + setNum(i), "0"), String.class);
+            datas.add(data);
         }
 
-        return wordList;
+        return datas;
     }
 
     private void ClearDB() {
-        recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
-        editor = recentWords.edit();
+        recentDatas = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        editor = recentDatas.edit();
         editor.clear();
         editor.commit();
     }
 
     private int getTop() {
-        recentWords = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
+        recentDatas = getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
 
-        if (!recentWords.contains(COUNT)) {
+        if (!recentDatas.contains(COUNT)) {
             return ZERO;
         } else {
-            return recentWords.getInt(COUNT, ZERO) + 1;
+            return recentDatas.getInt(COUNT, ZERO) + 1;
         }
 
     }
