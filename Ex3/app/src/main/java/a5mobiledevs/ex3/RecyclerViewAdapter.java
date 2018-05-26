@@ -41,6 +41,7 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
             @Override
             public void onClick(View v) {
                 Intent save = new Intent(context, DBService.class);
+                save.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 save.setAction("SAVE");
                 save.putExtra("data", data.get(position));
                 context.startService(save);
@@ -53,9 +54,7 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
         return data.size();
     }
 
-
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
-
         TextView tv_jobInfos;
         Button btn_save;
         public RecyclerViewHolder(View itemView) {

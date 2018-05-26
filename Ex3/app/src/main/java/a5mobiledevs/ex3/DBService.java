@@ -42,6 +42,7 @@ public class DBService extends IntentService {
                 case "SAVE":
                     Log.i("SAVE", "SAVE");
                     SaveToDB(intent);
+                    break;
                 case "LOAD":
                     List<String> datas = LoadFromDB();
 
@@ -49,13 +50,16 @@ public class DBService extends IntentService {
                     update_saved.setAction("Update_saved");
                     update_saved.putExtra("data", new Gson().toJson(datas));
                     LocalBroadcastManager.getInstance(this).sendBroadcast(intent);
+                    break;
+                default:
+                        break;
             }
 
         }
     }
 
     private void SaveToDB(Intent intent){
-
+        Log.i("SavedToDB","SavedToDB");
         recentDatas = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         editor = recentDatas.edit();
         Bundle receivedData = intent.getExtras();
@@ -79,7 +83,7 @@ public class DBService extends IntentService {
     }
 
     private List<String> LoadFromDB(){
-
+        Log.i("LoadFromDB","LoadFromDB");
         recentDatas = getApplicationContext().getSharedPreferences(SHARED_PREFERENCES_NAME, Context.MODE_PRIVATE);
         List<String> datas = new ArrayList<>();
 

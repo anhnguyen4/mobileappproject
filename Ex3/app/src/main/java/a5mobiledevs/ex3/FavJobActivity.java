@@ -1,11 +1,11 @@
 package a5mobiledevs.ex3;
 
-import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 
@@ -22,8 +22,6 @@ public class FavJobActivity extends AppCompatActivity {
     private RecyclerViewAdapter recyclerViewAdapter;
     private List<String> favJobs;
 
-    private int num = 0;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +30,13 @@ public class FavJobActivity extends AppCompatActivity {
         recyclerView = findViewById(R.id.rv_favjobs);
 
         favJobs = new ArrayList<>();
+
+        recyclerViewAdapter = new RecyclerViewAdapter(context, favJobs);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(recyclerViewAdapter);
+
         Intent loadDB = new Intent(this, DBService.class);
         loadDB.setAction("LOAD");
         startService(loadDB);
