@@ -2,15 +2,19 @@ package a5mobiledevs.ex3;
 
 import android.content.Context;
 import android.content.Intent;
+
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import android.widget.Button;
+
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
+
 
 public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>{
 
@@ -26,6 +30,7 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
     public RecyclerViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         LayoutInflater inflater = LayoutInflater.from(parent.getContext());
         View view = inflater.inflate(R.layout.job_entry, parent, false);
+
         return new RecyclerViewHolder(view);
     }
 
@@ -50,6 +55,7 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
 
 
     public class RecyclerViewHolder extends RecyclerView.ViewHolder {
+
         TextView tv_jobInfos;
         Button btn_save;
         public RecyclerViewHolder(View itemView) {
@@ -60,3 +66,4 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
     }
 
 }
+
