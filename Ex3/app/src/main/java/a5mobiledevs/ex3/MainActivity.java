@@ -2,10 +2,12 @@ package a5mobiledevs.ex3;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.ColorStateList;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -31,18 +33,18 @@ public class MainActivity extends AppCompatActivity {
     private List<String> data;
     private RecyclerView recyclerView;
     private RecyclerViewAdapter recyclerViewAdapter;
+    private LinearLayoutManager layoutManager;
 
     private  int i;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        recyclerView = findViewById(R.id.rv_jobs);
+
         data = new ArrayList<>();
+
         btnSearch =  findViewById(R.id.btnSearch);
         btnSearch.setOnClickListener(new View.OnClickListener() {
 
@@ -52,19 +54,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        recyclerView = findViewById(R.id.rv_jobs);
+        recyclerViewAdapter = new RecyclerViewAdapter(context, data);
+        layoutManager = new LinearLayoutManager(getApplicationContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        recyclerView.setLayoutManager(layoutManager);
+        recyclerView.setAdapter(recyclerViewAdapter);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
 
-        BottomNavigationView navigation =  findViewById(R.id.navigation);
+        BottomNavigationView navigation =  findViewById(R.id.nav_bot_navigation);
         navigation.setOnNavigationItemSelectedListener(new BottomNavigationView.OnNavigationItemSelectedListener() {
             @Override
             public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
                 switch (item.getItemId()){
-                    case R.id.navigation_saved:
+                    case R.id.bot_navigation_saved:
                         Intent saved = new Intent(context, FavJobActivity.class);
-                        saved.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//                        saved.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                         startActivity(saved);
+                        break;
+                    default:
+                            break;
                 }
-
                 return false;
             }
         });
@@ -168,13 +178,10 @@ public class MainActivity extends AppCompatActivity {
                             data.add(builder.toString());
                         }
 
-                        Log.i("LOL", builder.toString());
+//                        Log.i("LOL", builder.toString());
 
-                        recyclerViewAdapter = new RecyclerViewAdapter(context, data);
-                        LinearLayoutManager layoutManager = new LinearLayoutManager(getApplicationContext());
-                        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-                        recyclerView.setLayoutManager(layoutManager);
-                        recyclerView.setAdapter(recyclerViewAdapter);
+                        recyclerView.setAdapter(new RecyclerViewAdapter(context, data));
+                        recyclerView.invalidate();
 
                     }
                 });

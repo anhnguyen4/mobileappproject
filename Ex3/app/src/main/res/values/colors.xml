@@ -3,8 +3,9 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
-    <color name="jobInfoColor">#dba11a</color>
+    <color name="jobInfoColor">#2a0cf1</color>
+    <color name="favjobInfoColor">#2a0cf1</color>
 
-    <color name="FavJobsActivityBG">#ebd3a5</color>
+    <color name="FavJobsActivityBG">#ffffff</color>
     <color name="btn_saveColor">#da850e</color>
 </resources>

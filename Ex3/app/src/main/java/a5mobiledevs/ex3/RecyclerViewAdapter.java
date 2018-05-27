@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,7 +20,7 @@ import java.util.List;
 public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapter.RecyclerViewHolder>{
 
     private Context context ;
-    private List<String> data = new ArrayList<>();
+    private List<String> data = new ArrayList<>();;
 
     public RecyclerViewAdapter(Context context, List<String> data) {
         this.context = context;
@@ -40,11 +41,7 @@ public class RecyclerViewAdapter  extends RecyclerView.Adapter<RecyclerViewAdapt
         holder.btn_save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent save = new Intent(context, DBService.class);
-                save.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                save.setAction("SAVE");
-                save.putExtra("data", data.get(position));
-                context.startService(save);
+                DBService.SaveToDB(context, data.get(position));
             }
         });
     }
